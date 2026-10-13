@@ -20,8 +20,7 @@ body {
   /* 明快的天空渐变，符合卡通三消气质 */
   background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 40%, #d9f99d 100%);
   color: #334155;
-  display: flex;
-  justify-content: center;
+  /* 普通块布局 + 居中容器：避免 flex 拉伸/压缩干扰棋盘宽高比 */
   /* iOS 安全区适配 */
   padding: calc(8px + env(safe-area-inset-top)) 10px calc(16px + env(safe-area-inset-bottom));
   user-select: none;
@@ -32,6 +31,7 @@ body {
 .game-wrap {
   width: 100%;
   max-width: 520px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
