@@ -1,0 +1,330 @@
+/* ============================================================
+ * style.css - 开心消消乐网页版样式
+ * 卡通明快风格：天空渐变背景、圆角卡片、糖果色按钮
+ * 移动端优先：小屏自适应、触控热区 >= 44px、禁用误触缩放
+ * ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  /* 明快的天空渐变，符合卡通三消气质 */
+  background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 40%, #d9f99d 100%);
+  color: #334155;
+  display: flex;
+  justify-content: center;
+  /* iOS 安全区适配 */
+  padding: calc(8px + env(safe-area-inset-top)) 10px calc(16px + env(safe-area-inset-bottom));
+  user-select: none;
+  -webkit-user-select: none;
+  overflow-x: hidden;
+}
+
+.game-wrap {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- 标题 ---------- */
+.header {
+  text-align: center;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 0 #f59e0b, 0 4px 8px rgba(0, 0, 0, 0.18);
+  letter-spacing: 4px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+/* ---------- HUD 记分板 ---------- */
+.hud {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.hud-item {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 14px;
+  padding: 6px 4px;
+  text-align: center;
+  box-shadow: 0 3px 0 rgba(15, 118, 110, 0.15);
+}
+
+.hud-label {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.hud-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f766e;
+  line-height: 1.25;
+}
+
+.hud-target { color: #d97706; }
+.hud-score  { color: #dc2626; }
+.hud-moves  { color: #2563eb; }
+
+/* 步数告急时闪烁提醒 */
+.hud-moves.low {
+  color: #ef4444;
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.35; }
+}
+
+/* ---------- 目标进度条 ---------- */
+.progress {
+  position: relative;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  overflow: visible;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fde047, #f59e0b);
+  transition: width 0.35s ease;
+}
+
+.progress-star {
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  color: #f59e0b;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* 达标后星星亮起 */
+.progress-star.reached {
+  animation: star-pop 0.6s ease infinite alternate;
+}
+
+@keyframes star-pop {
+  from { transform: translateY(-50%) scale(1); }
+  to   { transform: translateY(-50%) scale(1.35); }
+}
+
+/* ---------- 游戏舞台 ---------- */
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35), inset 0 0 0 4px rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* 关键：禁掉浏览器手势，滑动只用于交换棋子 */
+}
+
+/* ---------- 遮罩层（开始/过关/失败/选关） ---------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 10;
+}
+
+.overlay.show {
+  display: flex;
+}
+
+.panel {
+  width: 82%;
+  max-width: 340px;
+  max-height: 88%;
+  overflow-y: auto;
+  background: #fffbeb;
+  border-radius: 22px;
+  padding: 22px 20px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  animation: panel-in 0.3s ease;
+}
+
+@keyframes panel-in {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.panel h2 {
+  font-size: 24px;
+  color: #d97706;
+  margin-bottom: 8px;
+}
+
+.panel p {
+  font-size: 14px;
+  color: #57534e;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.panel .big-score {
+  font-size: 34px;
+  font-weight: 900;
+  color: #dc2626;
+  margin: 8px 0;
+}
+
+.panel .btn-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+/* 选关网格 */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.level-btn {
+  aspect-ratio: 1 / 1;
+  border: none;
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 800;
+  background: linear-gradient(180deg, #fde047, #fbbf24);
+  color: #78350f;
+  box-shadow: 0 3px 0 #b45309;
+  cursor: pointer;
+  min-height: 44px; /* 触控热区 */
+}
+
+.level-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #b45309; }
+
+.level-btn.locked {
+  background: #e2e8f0;
+  color: #94a3b8;
+  box-shadow: 0 3px 0 #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* ---------- 按钮 ---------- */
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  min-height: 46px; /* 触控热区 >= 44px */
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.06s ease;
+}
+
+.btn:active { transform: translateY(2px) scale(0.98); }
+
+.btn-primary {
+  background: linear-gradient(180deg, #fb923c, #f97316);
+  color: #fff;
+  box-shadow: 0 4px 0 #c2410c;
+}
+
+.btn-primary:active { box-shadow: 0 1px 0 #c2410c; }
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.85);
+  color: #0369a1;
+  box-shadow: 0 4px 0 rgba(3, 105, 161, 0.3);
+}
+
+.btn-ghost:active { box-shadow: 0 1px 0 rgba(3, 105, 161, 0.3); }
+
+/* 面板里的按钮不撑满 */
+.panel .btn { flex: 0 1 auto; padding: 0 18px; }
+
+/* ---------- 玩法说明 ---------- */
+.help {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.help-title {
+  font-size: 14px;
+  color: #0369a1;
+  margin-bottom: 6px;
+}
+
+.help-list {
+  list-style: none;
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.9;
+}
+
+.help-list li::before {
+  content: "🐾 ";
+  font-size: 11px;
+}
+
+.help-list b { color: #b45309; }
+
+/* ---------- 小屏微调 ---------- */
+@media (max-width: 380px) {
+  .title { font-size: 26px; }
+  .hud-value { font-size: 17px; }
+  .help-list { font-size: 11px; }
+}
+
+/* 横屏且高度不足时压缩间距，保证棋盘可见 */
+@media (max-height: 620px) {
+  .help { display: none; }
+  .game-wrap { gap: 6px; }
+  .title { font-size: 22px; }
+}

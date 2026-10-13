@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="description" content="开心消消乐风格网页三消小游戏 - 8x8 棋盘、关卡闯关、连击特效，支持手机触屏" />
+  <title>开心消消乐 · 网页版</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="game-wrap">
+    <!-- 标题栏 -->
+    <header class="header">
+      <h1 class="title">开心消消乐</h1>
+      <p class="subtitle">网页三消 · 触屏版</p>
+    </header>
+
+    <!-- 记分板 HUD -->
+    <section class="hud" aria-label="游戏信息">
+      <div class="hud-item">
+        <span class="hud-label">关卡</span>
+        <span class="hud-value" id="hud-level">1</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">目标分</span>
+        <span class="hud-value hud-target" id="hud-target">500</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">当前分</span>
+        <span class="hud-value hud-score" id="hud-score">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">剩余步数</span>
+        <span class="hud-value hud-moves" id="hud-moves">18</span>
+      </div>
+    </section>
+
+    <!-- 目标进度条 -->
+    <div class="progress" aria-label="目标进度">
+      <div class="progress-fill" id="progress-fill"></div>
+      <span class="progress-star" id="progress-star">★</span>
+    </div>
+
+    <!-- 游戏舞台：Canvas + 遮罩层 -->
+    <div class="stage" id="stage">
+      <canvas id="game-canvas" aria-label="三消游戏棋盘区域"></canvas>
+      <div class="overlay" id="overlay" role="dialog" aria-label="游戏状态面板"></div>
+    </div>
+
+    <!-- 控制按钮 -->
+    <section class="controls" aria-label="游戏控制">
+      <button type="button" class="btn btn-primary" id="btn-restart">重开本关</button>
+      <button type="button" class="btn btn-ghost" id="btn-levels">选择关卡</button>
+      <button type="button" class="btn btn-ghost" id="btn-sound" aria-pressed="true">音效:开</button>
+    </section>
+
+    <!-- 游戏说明 -->
+    <section class="help" aria-label="游戏说明">
+      <h2 class="help-title">玩法说明</h2>
+      <ul class="help-list">
+        <li><b>点选两个相邻小动物</b>或<b>按住拖动</b>，交换位置凑成 3 个相同即可消除</li>
+        <li><b>4 连消</b>生成整行/整列消除的直线特效，<b>5 连消</b>生成彩色星星</li>
+        <li><b>L/T 形</b>消除生成 3x3 爆炸炸弹；彩色星星与任意动物交换可消除全场同类</li>
+        <li>一次交换引发的连锁消除会按<b>连击倍数</b>加分</li>
+        <li>在步数用完前达到目标分数即可过关，共 10 关难度递增</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- 按依赖顺序加载脚本（命名空间挂载，支持 file:// 直接打开） -->
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
