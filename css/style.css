@@ -144,6 +144,7 @@ body {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
+  flex-shrink: 0; /* 关键：防止 flex 列布局在高度不足时把棋盘压扁，宁可页面滚动 */
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35), inset 0 0 0 4px rgba(255, 255, 255, 0.6);
